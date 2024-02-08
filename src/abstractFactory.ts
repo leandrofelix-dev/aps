@@ -1,78 +1,64 @@
-interface AbstractFactory {
-    createProductA(): AbstractProductA;
-    createProductB(): AbstractProductB;
+interface ComponenteUI {
+    desenhar(): void;
 }
 
-interface AbstractProductA { usefulFunctionA(): string }
-interface AbstractProductB { usefulFunctionB(): string }
-
-class ConcreteFactory1 implements AbstractFactory {
-    public createProductA(): AbstractProductA {
-        return new ConcreteProductA1();
-    }
-
-    public createProductB(): AbstractProductB {
-        return new ConcreteProductB1();
-    }
+interface IAbstractFactory {
+    createBotao(): ComponenteUI;
+    createJanela(): ComponenteUI;
+    createCursor(): ComponenteUI;
+    createSelect(): ComponenteUI;
+    createInput(): ComponenteUI;
 }
 
-class ConcreteFactory2 implements AbstractFactory {
-    public createProductA(): AbstractProductA {
-        return new ConcreteProductA2();
+class WindowsFactory implements IAbstractFactory {
+    createBotao(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Botão Windows") };
+    }
+    createJanela(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Janela Windows") };
+    }
+    createCursor(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Cursor Windows") };
+    }
+    createSelect(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Select Windows") };
+    }
+    createInput(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Input Windows") };
     }
 
-    public createProductB(): AbstractProductB {
-        return new ConcreteProductB2();
-    }
 }
 
-class ConcreteProductA1 implements AbstractProductA {
-    public usefulFunctionA(): string {
-        return 'The result of the product A1.';
+class MacFactory implements IAbstractFactory {
+    createJanela(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Janela Mac") };
     }
-}
-
-class ConcreteProductA2 implements AbstractProductA {
-    public usefulFunctionA(): string {
-        return 'The result of the product A2.';
+    createCursor(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Cursor Mac") };
     }
-}
-
-class ConcreteProductB1 implements AbstractProductB {
-
-    public usefulFunctionB(): string {
-        return 'The result of the product B1.';
+    createSelect(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Select Mac") };
     }
-
-    public anotherUsefulFunctionB(collaborator: AbstractProductA): string {
-        const result = collaborator.usefulFunctionA();
-        return `The result of the B1 collaborating with the (${result})`;
+    createInput(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Input Mac") };
+    }
+    createBotao(): ComponenteUI {
+        return { desenhar: () => console.log("Renderizar Botão Mac") };
     }
 }
 
-class ConcreteProductB2 implements AbstractProductB {
+class AplicacaoUI {
+    constructor(private factory: IAbstractFactory) {}
 
-    public usefulFunctionB(): string {
-        return 'The result of the product B2.';
-    }
-
-    public anotherUsefulFunctionB(collaborator: AbstractProductA): string {
-        const result = collaborator.usefulFunctionA();
-        return `The result of the B2 collaborating with the (${result})`;
+    criarUI() {
+        this.factory.createBotao().desenhar();
+        this.factory.createCursor().desenhar();
+        this.factory.createInput().desenhar();
+        this.factory.createJanela().desenhar();
+        this.factory.createSelect().desenhar();
     }
 }
 
-function clientCode(factory: AbstractFactory) {
-    const productA = factory.createProductA();
-    const productB = factory.createProductB();
+const cliente = new AplicacaoUI(new MacFactory());
 
-    console.log(productB.usefulFunctionB());
-}
-
-console.log('Client: Testing client code with the first factory type...');
-clientCode(new ConcreteFactory1());
-
-console.log('');
-
-console.log('Client: Testing the same client code with the second factory type...');
-clientCode(new ConcreteFactory2());
+cliente.criarUI();
